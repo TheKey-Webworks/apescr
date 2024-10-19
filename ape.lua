@@ -70,7 +70,7 @@ local function selectQuest()
         selectedQuest = bestNpc or "No hay NPC disponible"
     end
 
-    if (selectedForm ~= Player.Status.Transformation.Value) then
+    if (selectedForm ~= Player.Status.Transformation.Value and selectedForm ~= "") then
         Events.equipskill:InvokeServer(selectedForm)
         Events.ta:InvokeServer()
     end
