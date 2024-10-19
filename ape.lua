@@ -70,9 +70,12 @@ local function selectQuest()
         selectedQuest = bestNpc or "No hay NPC disponible"
     end
 
+    if (selectedForm ~= Player.Status.Transformation.Value) then
+        Events.equipskill:InvokeServer(selectedForm)
+        Events.ta:InvokeServer()
+    end
+
     
-    Events.equipskill:InvokeServer(selectedForm)
-    Events.ta:InvokeServer()
     return selectedQuest
 end
 
@@ -173,11 +176,22 @@ while _G.farm do
     local questData = ReplicatedStorage.Package.Quests[questName]
 
     coroutine.wrap(function()
-        local A_1 = "Mach Kick"
-        Events.mel:InvokeServer(A_1, "Blacknwhite27")
-        task.wait()
-        Events.cha:InvokeServer("Blacknwhite27")
-        task.wait()
+
+        while _G.farm and task.wait() do
+            Events.mel:InvokeServer( "Wolf Fang Fist", "Blacknwhite27")
+            task.wait()
+            Events.mel:InvokeServer( "Mach Kick", "Blacknwhite27")
+            task.wait()
+            Events.mel:InvokeServer( "High Power Rush", "Blacknwhite27")
+            task.wait()
+            Events.cha:InvokeServer("Blacknwhite27")
+            task.wait()
+            Events.mel:InvokeServer( "God Slicer", "Blacknwhite27")
+            task.wait()
+            Events.cha:InvokeServer("Blacknwhite27")
+            task.wait()
+            
+        end
     end)
 
     if questData and currentQuest.Value == questName then
