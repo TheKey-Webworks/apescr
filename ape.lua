@@ -108,7 +108,7 @@ local function moveToNpc(npc)
         end
 
         local npcPosition = npc.HumanoidRootPart.Position
-        local behindPosition = npcPosition - (npc.HumanoidRootPart.CFrame.LookVector * 1)
+        local behindPosition = npcPosition - (npc.HumanoidRootPart.CFrame.LookVector * 2)
 
         character.HumanoidRootPart.CFrame = CFrame.new(behindPosition, npcPosition)
 
@@ -185,8 +185,6 @@ while _G.farm do
         while _G.farm and task.wait() do
             Events.mel:InvokeServer( "Wolf Fang Fist", "Blacknwhite27")
             task.wait()
-            Events.cha:InvokeServer("Blacknwhite27")
-            task.wait()
             Events.mel:InvokeServer( "Mach Kick", "Blacknwhite27")
             task.wait()
             Events.mel:InvokeServer( "High Power Rush", "Blacknwhite27")
@@ -199,7 +197,7 @@ while _G.farm do
     coroutine.wrap(function()
         while _G.farm and task.wait( ) do
             Events.cha:InvokeServer("Blacknwhite27")
-            task.wait()
+            task.wait(1)
         end
     end)()
 
