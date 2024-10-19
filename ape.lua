@@ -61,7 +61,7 @@ local function selectQuest()
                 if diff < closestValue then
                     closestValue = diff
                     bestNpc = npcName
-                    equipskill(npc[3])
+                    print(npc[3], "----this")
                 end
             end
         end
