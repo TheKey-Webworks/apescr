@@ -190,9 +190,10 @@ while _G.farm do
             task.wait()
             Events.cha:InvokeServer("Blacknwhite27")
             task.wait()
-            
         end
-    end)
+    end)()
+
+   
 
     if questData and currentQuest.Value == questName then
         local goal = questData.Goal.Value
