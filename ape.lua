@@ -184,10 +184,13 @@ while _G.farm do
             task.wait()
             Events.mel:InvokeServer( "High Power Rush", "Blacknwhite27")
             task.wait()
-            Events.cha:InvokeServer("Blacknwhite27")
-            task.wait()
             Events.mel:InvokeServer( "God Slicer", "Blacknwhite27")
             task.wait()
+        end
+    end)()
+
+    coroutine.wrap(function()
+        while _G.farm and task.wait( ) do
             Events.cha:InvokeServer("Blacknwhite27")
             task.wait()
         end
