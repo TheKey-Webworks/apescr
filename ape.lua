@@ -207,7 +207,7 @@ while _G.farm do
                     killedNpcs += 1
                 end
 
-                if killedNpcs >= goal then
+                if killedNpcs >= goal or killedNpcs >= 3 then
                     break
                 end
             end
