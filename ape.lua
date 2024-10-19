@@ -54,14 +54,13 @@ local function selectQuest()
         local closestValue = math.huge
 
         for _, npc in pairs(npcs) do
-            local npcName, npcMinStats = npc[1], npc[2]
+            local npcName, npcMinStats, form = npc[1], npc[2], npc[3]
 
             if currentStats.Value >= npcMinStats then
                 local diff = currentStats.Value - npcMinStats
                 if diff < closestValue then
                     closestValue = diff
                     bestNpc = npcName
-                    print(npc[3], "----this")
                 end
             end
         end
@@ -70,7 +69,7 @@ local function selectQuest()
     end
 
     
-    Events.ta:InvokeServer()
+    -- Events.ta:InvokeServer()
     return selectedQuest
 end
 
