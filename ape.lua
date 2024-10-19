@@ -43,6 +43,7 @@ end
 local function selectQuest()
     local time = getCurrentTime()
     local selectedQuest = ""
+    local selectedForm = ""
     local equipskill = Events.equipskill
 
     print("the time is -- ".. time .. " --")
@@ -61,6 +62,7 @@ local function selectQuest()
                 if diff < closestValue then
                     closestValue = diff
                     bestNpc = npcName
+                    selectedForm = form
                 end
             end
         end
@@ -69,7 +71,8 @@ local function selectQuest()
     end
 
     
-    -- Events.ta:InvokeServer()
+    Events.equipskill:InvokeServer(selectedForm)
+    Events.ta:InvokeServer()
     return selectedQuest
 end
 
@@ -127,10 +130,7 @@ local function attack(npc)
             return false -- Si el personaje ha muerto, termina la función
         end
 
-        task.spawn(function()
-            local A_1 = "Mach Kick"
-            Events.mel:InvokeServer(A_1, "Blacknwhite27")
-        end)
+      
 
         for i = 1, 4 do
             Events.p:FireServer("Blacknwhite27", i)
@@ -139,7 +139,6 @@ local function attack(npc)
                 return true
             end
         end
-        Events.cha:InvokeServer("Blacknwhite27")
         task.wait()
     end
 
@@ -173,6 +172,14 @@ while _G.farm do
     local questName = selectQuest()
     local questData = ReplicatedStorage.Package.Quests[questName]
 
+    coroutine.wrap(function()
+        local A_1 = "Mach Kick"
+        Events.mel:InvokeServer(A_1, "Blacknwhite27")
+        task.wait()
+        Events.cha:InvokeServer("Blacknwhite27")
+        task.wait()
+    end)
+
     if questData and currentQuest.Value == questName then
         local goal = questData.Goal.Value
         local npcToFarm = questData.Objective.Value
@@ -181,7 +188,7 @@ while _G.farm do
         for _, npc in pairs(workspace.Living:GetChildren()) do
             if npc.Name == npcToFarm and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
                 coroutine.wrap(moveToNpc)(npc)
-
+                
                 if attack(npc) then
                     killedNpcs += 1
                 end
