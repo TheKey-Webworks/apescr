@@ -18,22 +18,22 @@ _G.farm = true
 _G.hasQuest = false
 
 local npcs = {
-    {"SSJG Kakata", 77500000},
-    {"Broccoli", 35500000},
-    {"SSJB Wukong", 8000000},
-    {"Kai-fist Master", 17625000},
-    {"SSJ2 Wukong", 15350000},
-    {"Perfect Atom", 1575000},
-    {"Chilly", 750000},
-    {"Super Vegetable", 387500},
-    {"Mapa", 90000},
-    {"Radish", 75000},
-    {"Klirin", 7000},
-    {"X Fighter Trainer", 0}
+    {"SSJG Kakata", 150000000, "Astral Instinct"},
+    {"Broccoli", 50000000, "SSJB4"},
+    {"SSJB Wukong", 8000000, "Super Broly"},
+    {"Kai-fist Master", 7000000, "Evil SSJ"},
+    {"SSJ2 Wukong", 5000000, "Ultra instinct Omen"},
+    {"Perfect Atom", 3500000, "Dark Rose"},
+    {"Chilly", 1400000, "SSJ Rose"},
+    {"Super Vegetable", 700000, "Corrupt SSJ"},
+    {"Mapa", 200000, "Mystic"},
+    {"Radish", 100000, "SSJ3"},
+    {"Klirin", 50000, "SSJ2"},
+    {"X Fighter Trainer", 0, ""}
 }
 
 local forms = {
-    {"SSJ", 6000, 0},
+    "SSJ3", "SSJG", "SSJ Rose", "Super Broly", "True God of Destruction", "SSJB4", "Astral Instinct"
 }
 
 local function getCurrentTime()
@@ -43,6 +43,7 @@ end
 local function selectQuest()
     local time = getCurrentTime()
     local selectedQuest = ""
+    local equipskill = Events.equipskill
 
     print("the time is -- ".. time .. " --")
 
@@ -60,6 +61,7 @@ local function selectQuest()
                 if diff < closestValue then
                     closestValue = diff
                     bestNpc = npcName
+                    equipskill(npc[3])
                 end
             end
         end
@@ -67,6 +69,8 @@ local function selectQuest()
         selectedQuest = bestNpc or "No hay NPC disponible"
     end
 
+    
+    Events.ta:InvokeServer()
     return selectedQuest
 end
 
@@ -77,24 +81,7 @@ local function waitForCharacter()
     return Player.Character
 end
 
-local function makeInvisible()
-    -- local character = Player.Character or Player.CharacterAdded:Wait()
 
-    -- for _, part in ipairs(character:GetDescendants()) do
-    --     if part:IsA("BasePart") then
-    --         part.Transparency = 1
-    --     end
-    -- end
-
-    -- local head = character:FindFirstChild("Head")
-    -- if head then
-    --     for _, child in ipairs(head:GetChildren()) do
-    --         if child:IsA("BillboardGui") then
-    --             child:Destroy()
-    --         end
-    --     end
-    -- end
-end
 
 local function takeQuest(questName)
     local questGiver = workspace.Others.NPCs[questName]
@@ -111,16 +98,16 @@ local function moveToNpc(npc)
         local character = waitForCharacter()
 
         if not character:FindFirstChild("HumanoidRootPart") or not character:FindFirstChild("Humanoid") then
-            task.wait(0.1) -- Espera si no existen las partes necesarias
+            task.wait() -- Espera si no existen las partes necesarias
             continue
         end
 
         local npcPosition = npc.HumanoidRootPart.Position
-        local behindPosition = npcPosition - (npc.HumanoidRootPart.CFrame.LookVector * 2)
+        local behindPosition = npcPosition - (npc.HumanoidRootPart.CFrame.LookVector * 1)
 
         character.HumanoidRootPart.CFrame = CFrame.new(behindPosition, npcPosition)
 
-        task.wait(0.1)
+        task.wait()
     end
 end
 
@@ -141,20 +128,25 @@ local function attack(npc)
             return false -- Si el personaje ha muerto, termina la función
         end
 
+        task.spawn(function()
+            local A_1 = "Mach Kick"
+            Events.mel:InvokeServer(A_1, "Blacknwhite27")
+        end)
+
         for i = 1, 4 do
             Events.p:FireServer("Blacknwhite27", i)
-            task.wait(0.1)
 
             if npc.Humanoid.Health <= 0 then
                 return true
             end
         end
+        Events.cha:InvokeServer("Blacknwhite27")
+        task.wait()
     end
 
     return false
 end
 
-makeInvisible()
 
 
 
@@ -162,7 +154,6 @@ makeInvisible()
 
 Player.CharacterAdded:Connect(function()
     task.wait(1)
-    makeInvisible()
     _G.hasQuest = false -- Restablece la variable al renacer
 
     -- Volver a tomar la misión después de renacer
@@ -171,11 +162,6 @@ Player.CharacterAdded:Connect(function()
 end)
 
 while _G.farm do
-
-    if invis_on and Player.Character then
-        makeInvisible()
-    end
-    
     Events.reb:InvokeServer()
     -- Verifica si hay una misión activa
     if not _G.hasQuest then
@@ -208,9 +194,13 @@ while _G.farm do
         end
 
         if killedNpcs >= goal then
+        Events.reb:InvokeServer()
+
             takeQuest(selectQuest())
         end
     else
+    Events.reb:InvokeServer()
+
         takeQuest(questName)
     end
 
