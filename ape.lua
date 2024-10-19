@@ -208,7 +208,7 @@ while _G.farm do
         local npcToFarm = questData.Objective.Value
         local killedNpcs = 0
 
-        for _, npc in pairs(workspace.Living:GetChildren()) do
+        for i, npc in pairs(workspace.Living:GetChildren()) do
             if npc.Name == npcToFarm and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
                 coroutine.wrap(moveToNpc)(npc)
                 
@@ -216,7 +216,7 @@ while _G.farm do
                     killedNpcs += 1
                 end
 
-                if killedNpcs >= goal or killedNpcs >= 3 then
+                if killedNpcs >= goal or i >= 3 then
                     break
                 end
             end
