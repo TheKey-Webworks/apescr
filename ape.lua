@@ -70,7 +70,7 @@ local function selectQuest()
         selectedQuest = bestNpc or "No hay NPC disponible"
     end
 
-    if (selectedForm ~= Player.Status.Transformation.Value and selectedForm ~= "") then
+    if (Player.Status.Transformation.Value == "None" or Player.Status.Transformation.Value ~= selectedForm) then
         Events.equipskill:InvokeServer(selectedForm)
         Events.ta:InvokeServer()
     end
@@ -163,6 +163,11 @@ Player.CharacterAdded:Connect(function()
 end)
 
 while _G.farm do
+    Events.equipskill:InvokeServer("Wolf Fang Fist")
+    Events.equipskill:InvokeServer("Mach Kick")
+    Events.equipskill:InvokeServer("High Power Rush")
+    Events.equipskill:InvokeServer("God Slicer")
+
     Events.reb:InvokeServer()
     -- Verifica si hay una misión activa
     if not _G.hasQuest then
@@ -179,6 +184,8 @@ while _G.farm do
 
         while _G.farm and task.wait() do
             Events.mel:InvokeServer( "Wolf Fang Fist", "Blacknwhite27")
+            task.wait()
+            Events.cha:InvokeServer("Blacknwhite27")
             task.wait()
             Events.mel:InvokeServer( "Mach Kick", "Blacknwhite27")
             task.wait()
