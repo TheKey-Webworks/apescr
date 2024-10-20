@@ -14,7 +14,6 @@ local currentRb = Datas[UserId].Rebirth
 local invis_on = true -- Activar invisibilidad de forma predeterminada
 
 _G.farm = true
-
 _G.hasQuest = false
 
 local npcs = {
@@ -36,19 +35,24 @@ local forms = {
     "SSJ3", "SSJG", "SSJ Rose", "Super Broly", "True God of Destruction", "SSJB4", "Astral Instinct"
 }
 
+-- Obtener la hora actual
 local function getCurrentTime()
     return Lighting.ClockTime
 end
 
+-- Seleccionar la misión
 local function selectQuest()
     local time = getCurrentTime()
     local selectedQuest = ""
     local selectedForm = ""
     local equipskill = Events.equipskill
 
-    print("the time is -- ".. time .. " --")
+    print("La hora es -- " .. time .. " --")
 
-    if (time >= 16 and time < 24 and gohanStats.Value > 30000) then
+    if (time >= 16 and time < 24) then
+        if (currentStats.Value < 10000) then
+        game:GetService("ReplicatedStorage").Package.Events.def:InvokeServer("Blacknwhite27")
+        end
         selectedQuest = "Kid Nohag"
     else
         local bestNpc = nil
@@ -75,10 +79,10 @@ local function selectQuest()
         Events.ta:InvokeServer()
     end
 
-    
     return selectedQuest
 end
 
+-- Esperar que el personaje cargue
 local function waitForCharacter()
     while not Player.Character do
         task.wait(0.1)
@@ -86,8 +90,7 @@ local function waitForCharacter()
     return Player.Character
 end
 
-
-
+-- Tomar misión
 local function takeQuest(questName)
     local questGiver = workspace.Others.NPCs[questName]
     if questGiver and questGiver:FindFirstChild("HumanoidRootPart") then
@@ -98,6 +101,7 @@ local function takeQuest(questName)
     end
 end
 
+-- Moverse al NPC
 local function moveToNpc(npc)
     while _G.farm and _G.hasQuest and npc.Parent and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 do
         local character = waitForCharacter()
@@ -116,6 +120,7 @@ local function moveToNpc(npc)
     end
 end
 
+-- Atacar al NPC
 local function attack(npc)
     local character = waitForCharacter() -- Asegúrate de que el personaje esté disponible
 
@@ -133,8 +138,6 @@ local function attack(npc)
             return false -- Si el personaje ha muerto, termina la función
         end
 
-      
-
         for i = 1, 4 do
             Events.p:FireServer("Blacknwhite27", i)
 
@@ -148,11 +151,7 @@ local function attack(npc)
     return false
 end
 
-
-
-
-
-
+-- Conectar al renacer del personaje
 Player.CharacterAdded:Connect(function()
     task.wait(1)
     _G.hasQuest = false -- Restablece la variable al renacer
@@ -162,6 +161,7 @@ Player.CharacterAdded:Connect(function()
     takeQuest(questName)
 end)
 
+-- Bucle principal
 while _G.farm do
     Events.equipskill:InvokeServer("Wolf Fang Fist")
     Events.equipskill:InvokeServer("Mach Kick")
@@ -169,6 +169,7 @@ while _G.farm do
     Events.equipskill:InvokeServer("God Slicer")
 
     Events.reb:InvokeServer()
+
     -- Verifica si hay una misión activa
     if not _G.hasQuest then
         local questName = selectQuest()
@@ -181,55 +182,50 @@ while _G.farm do
     local questData = ReplicatedStorage.Package.Quests[questName]
 
     coroutine.wrap(function()
-
         while _G.farm and task.wait() do
-            Events.mel:InvokeServer( "Wolf Fang Fist", "Blacknwhite27")
+            Events.mel:InvokeServer("Wolf Fang Fist", "Blacknwhite27")
             task.wait()
-            Events.mel:InvokeServer( "Mach Kick", "Blacknwhite27")
+            Events.mel:InvokeServer("Mach Kick", "Blacknwhite27")
             task.wait()
-            Events.mel:InvokeServer( "High Power Rush", "Blacknwhite27")
+            Events.mel:InvokeServer("High Power Rush", "Blacknwhite27")
             task.wait()
-            Events.mel:InvokeServer( "God Slicer", "Blacknwhite27")
+            Events.mel:InvokeServer("God Slicer", "Blacknwhite27")
             task.wait()
         end
     end)()
 
     coroutine.wrap(function()
-        while _G.farm and task.wait( ) do
+        while _G.farm and task.wait() do
             Events.cha:InvokeServer("Blacknwhite27")
-            task.wait(1)
+            task.wait(0.5)
         end
     end)()
-
-   
 
     if questData and currentQuest.Value == questName then
         local goal = questData.Goal.Value
         local npcToFarm = questData.Objective.Value
         local killedNpcs = 0
 
-        for i, npc in pairs(workspace.Living:GetChildren()) do
+        for _, npc in pairs(workspace.Living:GetChildren()) do
             if npc.Name == npcToFarm and npc:FindFirstChild("Humanoid") and npc.Humanoid.Health > 0 then
                 coroutine.wrap(moveToNpc)(npc)
-                
+
                 if attack(npc) then
                     killedNpcs += 1
                 end
 
-                if killedNpcs >= goal or i >= 3  then
+                if killedNpcs >= goal then
                     break
                 end
             end
         end
 
         if killedNpcs >= goal then
-        Events.reb:InvokeServer()
-
+            Events.reb:InvokeServer()
             takeQuest(selectQuest())
         end
     else
-    Events.reb:InvokeServer()
-
+        Events.reb:InvokeServer()
         takeQuest(questName)
     end
 
